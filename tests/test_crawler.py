@@ -37,6 +37,15 @@ class TesExtractor(unittest.TestCase):
 
         strategy.get_data.assert_called_once_with()
 
+    def test_extractorResultGetData(self):
+        strategy = mock.MagicMock()
+        strategy.get_data.return_value = {"success": True}
+        extractor = Extractor(strategy)
+        result = extractor.get_result()
+
+        self.assertTrue(result.get_data()["success"])
+
+        
     def test_extractorResultGetJson(self):
         strategy = mock.MagicMock()
         strategy.get_data.return_value = {"success": True}
