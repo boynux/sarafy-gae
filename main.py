@@ -38,7 +38,7 @@ class ExchangeRatesAverage(webapp2.RequestHandler):
         exchangeRate.addAggregator(Average())
 
         exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
-        # exchangeRate.addExtractor(Extractor(MazanexImpl((httpclient.Client()))))
+        exchangeRate.addExtractor(Extractor(MazanexImpl((httpclient.Client()))))
 
         result = exchangeRate.getResult().get_json()
 
