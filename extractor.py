@@ -101,10 +101,10 @@ class MazanexImpl(ExtractorImpl):
 
     def __processHtml(self, dom):
         col = dom.find(".//table[@id='m_tbl']//tr[2]/td[2]")
-        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-        usd_rate = locale.atof(str(col.text))
+        usd_rate = float(str(col.text).translate(None, ','))
 
-        return {'IRR': {'USD': usd_rate * 10}}
+        print usd_rate
+        return {'IRR': {'USD': usd_rate * 1.0}}
 
 # Mesghaal implementation. (this service is absolette
 class MesghaalImpl(ExtractorImpl):
