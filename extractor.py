@@ -1,12 +1,9 @@
-from bs4 import BeautifulSoup
-from abc import ABCMeta
-from abc import abstractmethod
-from httpclient import Client,UserAgent
-import html5lib
-import json
-
+import html5lib, json, locale
 import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import Element
+
+from bs4 import BeautifulSoup
+from abc import ABCMeta, abstractmethod
+from httpclient import Client,UserAgent
 
 class Crawler:
     def __init__(self, url = None):
@@ -72,7 +69,7 @@ class SarafikishImpl(ExtractorImpl):
 
     def _fetch_data(self):
         for key in self.headers:
-            self.client.setHeader(key, self.headers[key]) 
+            self.client.setHeader(key, self.headers[key])
 
         jsonp = self.client.get(self.weburl).getBody()
         return jsonp[8:-2]
@@ -85,11 +82,29 @@ class SarafikishImpl(ExtractorImpl):
 
         for commodity, values in json.loads(jsonString).iteritems():
             if commodity in ["USDIRT", "EURIRT", "AEDIRT"]:
-                result["IRR"][str(commodity[0:3])] = [values["bid"] * 1000]
+                result["IRR"][str(commodity[0:3])] = values["bid"] * 10000
 
             if commodity in ["GOLD24"]:
-                result["IRR"][str(commodity[-2:] + "K")] = [values["bid"] * 1000]
+                result["IRR"][str(commodity[-2:] + "K")] = values["bid"] * 1000
         return result
+
+class MazanexImpl(ExtractorImpl):
+    weburl = "http://www.mazanex.com"
+
+    def _fetch_data(self):
+        html = self.client.get(self.weburl).getBody()
+        return html
+
+    def _get_data(self, data):
+        dom = html5lib.parse(data, namespaceHTMLElements=False)
+        return self.__processHtml(dom)
+
+    def __processHtml(self, dom):
+        col = dom.find(".//table[@id='m_tbl']//tr[2]/td[2]")
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+        usd_rate = locale.atof(str(col.text))
+
+        return {'IRR': {'USD': usd_rate * 10}}
 
 # Mesghaal implementation. (this service is absolette
 class MesghaalImpl(ExtractorImpl):
@@ -100,7 +115,7 @@ class MesghaalImpl(ExtractorImpl):
 
     def _get_data(self, data):
         return self.__processHtml(data)
-        
+
     def __processHtml(self, dom):
         rows = dom.iter('tr')
         for row in rows:
