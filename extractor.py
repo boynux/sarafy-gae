@@ -47,7 +47,7 @@ class ExtractorResult:
         return self.result
 
     def get_json(self):
-        return '{"title": "%s"}' % self.result
+        return json.dumps(self.result)
 
 class ExtractorImpl:
     __metaclass__ = ABCMeta

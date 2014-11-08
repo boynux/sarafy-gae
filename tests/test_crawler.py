@@ -32,11 +32,18 @@ class TesExtractor(unittest.TestCase):
 
     def test_extractorGetResult(self):
         strategy = mock.MagicMock()
-        crawler = mock.MagicMock()
         extractor = Extractor(strategy)
         extractor.get_result()
 
         strategy.get_data.assert_called_once_with()
+
+    def test_extractorResultGetJson(self):
+        strategy = mock.MagicMock()
+        strategy.get_data.return_value = {"success": True}
+        extractor = Extractor(strategy)
+        result = extractor.get_result()
+
+        self.assertEqual('{"success": true}', result.get_json())
 
     def test_MesghaalImpInstance(self):
         dom = html5lib.parse('<html><head></head><body><p>Hi</p></body></html>', namespaceHTMLElements=False);
