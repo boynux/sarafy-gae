@@ -22,7 +22,7 @@ class TesExtractor(unittest.TestCase):
         crawler = Crawler()
         crawler.open("http://ifconfig.me/ip")
         result = crawler.get_html()
-        
+
         client().get().getBody.assert_called_once_with()
 
     def test_extractorGetResult(self):
@@ -40,7 +40,6 @@ class TesExtractor(unittest.TestCase):
 
         self.assertTrue(result.get_data()["success"])
 
-        
     def test_extractorResultGetJson(self):
         strategy = mock.MagicMock()
         strategy.get_data.return_value = {"success": True}

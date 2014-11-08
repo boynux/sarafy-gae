@@ -40,7 +40,7 @@ class TestHttpClient(unittest.TestCase):
 
         body = self.client.get(url).getBody()
         self.assertEqual("127.0.0.1", body)
-        
+
         mockResponse.read.assert_called_with()
 
     def test_requsetQueryString(self):
@@ -52,13 +52,13 @@ class TestHttpClient(unittest.TestCase):
         request = args[0]
 
         self.assertEqual(url + '?q=1', request.get_full_url(), "Request url does not match with the actual.")
-        
+
     def test_SetUserAgent(self):
         agent = self.client.setHeader('User-Agent', httpclient.UserAgent.Firefox)
         url = 'http://ifconfig.me/ip'
 
         opener, _ = self._installMockUrllibOpener(body = "127.0.0.1")
-        
+
         registeredAgent = self.client.setHeader("User-Agent", agent)
         self.assertEqual(agent, registeredAgent)
 
@@ -71,7 +71,7 @@ class TestHttpClient(unittest.TestCase):
 
         body = self.client.get(url).getBody()
         args, kwargs = opener.open.call_args
-        
+
         headers = args[0].header_items()
         self.assertTrue(('User-agent', agent) in headers)
 
@@ -90,5 +90,5 @@ def Any(cls):
     class Any(cls):
         def __eq__(self, other):
             return True
-    
+
     return Any()

@@ -35,7 +35,7 @@ class Extractor:
 
     def get_result(self):
         return ExtractorResult(self.strategy.get_data())
-    
+
 class ExtractorResult:
     def __init__(self, result):
         self.result = result
