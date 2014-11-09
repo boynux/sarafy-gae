@@ -110,17 +110,23 @@ class MazanexImpl(ExtractorImpl):
         usdAsk = float(str(cols[1].text).translate(None, ','))
         usdBid = 0.0 if cols[2].text == u'-' else float(str(cols[2].text).translate(None, ','))
 
+        rates = {'GBP': 's0_42', 'MYR': 's0_54'}
+
         result = {'USD': { 
             'ASK': usdAsk * 1.0,
             'BID': usdBid * 1.0
             }
         }
 
+        for item in rates:
+            rate = self.__extract(rates[item], dom)
+            result[item] = dict((('ASK', 1/rate * usdAsk), ('BID', 1/rate * usdBid)))
+
         return {'IRR': result}
 
 
     def __extract(self, css, dom):
-        return float(str(dom.find(".//table//td[@class='%s price']" % css).text).translate(None, ',')), 0.0
+        return float(str(dom.find(".//table//td[@class='%s']" % css).text).translate(None, ','))
 
 
 class ArzliveImpl(ExtractorImpl):
