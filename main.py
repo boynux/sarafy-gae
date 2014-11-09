@@ -11,7 +11,7 @@ from abc import abstractmethod
 
 from exchangerate import ExchangeRate
 from aggregators import Average
-from extractor import Crawler, ExtractorImpl, Extractor, ExtractorResult, SarafikishImpl, MazanexImpl
+from extractor import Crawler, ExtractorImpl, Extractor, ExtractorResult, SarafikishImpl, MazanexImpl, ArzliveImpl
 import httpclient
 
 class MainPage(webapp2.RequestHandler):
@@ -39,6 +39,7 @@ class ExchangeRatesAverage(webapp2.RequestHandler):
 
         exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
         exchangeRate.addExtractor(Extractor(MazanexImpl((httpclient.Client()))))
+        exchangeRate.addExtractor(Extractor(ArzliveImpl((httpclient.Client()))))
 
         result = exchangeRate.getResult().get_json()
 

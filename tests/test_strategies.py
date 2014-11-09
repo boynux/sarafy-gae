@@ -1,6 +1,6 @@
 import os, unittest, mock, html5lib
 
-from extractor import Crawler, Extractor, ExtractorImpl, MesghaalImpl, SarafikishImpl, MazanexImpl
+from extractor import Crawler, Extractor, ExtractorImpl, MesghaalImpl, SarafikishImpl, MazanexImpl, ArzliveImpl
 
 class StertegiesImplTest(unittest.TestCase):
     def test_MesghaalImpInstance(self):
@@ -69,4 +69,29 @@ class StertegiesImplTest(unittest.TestCase):
                 )
                 self.assertEqual(0.0, result["IRR"]["USD"]["BID"])
                 self.assertEqual(32480.0, result["IRR"]["USD"]["ASK"])
+
+
+    def test_ArzliveImplInstance(self):
+        with mock.patch('httpclient.Client') as client:
+            impl = ArzliveImpl(client)
+
+            self.assertIsInstance(impl, ArzliveImpl)
+            self.assertIsInstance(impl, ExtractorImpl)
+
+    def test_ArzliveImplUSDParser(self):
+        with open(os.path.join(os.path.dirname(__file__), 'fixtures/arzlive-01.html')) as f:
+            with mock.patch('httpclient.Client') as client:
+                client.get().getBody.return_value = f.read()
+                impl = ArzliveImpl(client)
+                result = impl.get_data()
+
+                self.assertIsNotNone(result, "get data result is None!")
+                self.assertTrue('IRR' in result, "Can not find IRR commodity in result")
+                self.assertTrue(
+                    all(map(lambda i: i in result['IRR'], ['USD'])),
+                    "Can not find XXX => IRR commodity in result: " + result["IRR"].__repr__()
+                )
+                self.assertEqual(0.0, result["IRR"]["USD"]["BID"])
+                self.assertEqual(32480.0, result["IRR"]["USD"]["ASK"])
+
 

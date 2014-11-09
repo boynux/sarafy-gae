@@ -116,6 +116,25 @@ class MazanexImpl(ExtractorImpl):
             }
         }}
 
+class ArzliveImpl(ExtractorImpl):
+    weburl = "http://arzlive.com"
+
+    def _fetch_data(self):
+        return self.client.get(self.weburl).getBody()
+
+    def _get_data(self, data):
+        dom = html5lib.parse(data, namespaceHTMLElements=False)
+        return self.__processHtml(dom)
+
+    def __processHtml(self, dom):
+        usdAsk = float(str(dom.find(".//table//td[@class='s3_40 price']").text).translate(None, ','))
+
+        return {'IRR': {'USD': { 
+            'ASK': usdAsk * 1.0,
+            'BID': 0.0
+            }
+        }}
+
 # Mesghaal implementation. (this service is absolette
 class MesghaalImpl(ExtractorImpl):
     weburl = "http://www.mesghaal.com/";
