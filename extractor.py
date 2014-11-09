@@ -92,6 +92,17 @@ class SarafikishImpl(ExtractorImpl):
 
             if commodity in ["GOLD24"]:
                 result["IRR"][str(commodity[-2:] + "K")] = values["ask"] * 10000
+
+        for commodity, values in json.loads(jsonString).iteritems():
+            if commodity in ['GBPUSD']:
+                result["IRR"][str(commodity[0:3])] = {
+                    "ASK": values["ask"] * result['IRR']['USD']['ASK'],
+                    "BID": values["bid"] * result['IRR']['USD']['BID']
+                }
+
+            if commodity in ["GOLD24"]:
+                result["IRR"][str(commodity[-2:] + "K")] = values["ask"] * 10000
+
         return result
 
 class MazanexImpl(ExtractorImpl):
