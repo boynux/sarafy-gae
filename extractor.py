@@ -110,11 +110,18 @@ class MazanexImpl(ExtractorImpl):
         usdAsk = float(str(cols[1].text).translate(None, ','))
         usdBid = 0.0 if cols[2].text == u'-' else float(str(cols[2].text).translate(None, ','))
 
-        return {'IRR': {'USD': { 
+        result = {'USD': { 
             'ASK': usdAsk * 1.0,
             'BID': usdBid * 1.0
             }
-        }}
+        }
+
+        return {'IRR': result}
+
+
+    def __extract(self, css, dom):
+        return float(str(dom.find(".//table//td[@class='%s price']" % css).text).translate(None, ',')), 0.0
+
 
 class ArzliveImpl(ExtractorImpl):
     weburl = "http://arzlive.com"
