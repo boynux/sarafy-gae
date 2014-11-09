@@ -23,6 +23,7 @@ class Aggregator:
 
 class Average(Aggregator):
   def map(self, data):
+    data = filter(lambda x: True if x > 0.0 else False, data)
     return reduce(lambda x, y: x + y, data)/len(data)
 
 

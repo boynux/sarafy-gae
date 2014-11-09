@@ -11,6 +11,6 @@ class TestAggregtors(unittest.TestCase):
 
   def test_averageResult(self):
     agg = Average()
-    data = [32000.0, 33000.0, 34000.0]
+    data = [32000.0, 33000.0, 34000.0, 0.0]
 
     self.assertEqual(agg(data), 33000.0)
