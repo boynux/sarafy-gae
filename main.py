@@ -34,7 +34,7 @@ class ExchangeRates(webapp2.RequestHandler):
 
 class ExchangeRatesAverage(webapp2.RequestHandler):
     def get(self):
-        exchangeRate = ExchangeRate(to = ['USD', 'EUR', 'MYR'])
+        exchangeRate = ExchangeRate(to = ['USD', 'EUR', 'GBP', 'MYR'])
         exchangeRate.addAggregator(Average())
 
         exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
