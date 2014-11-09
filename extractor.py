@@ -100,9 +100,6 @@ class SarafikishImpl(ExtractorImpl):
                     "BID": values["bid"] * result['IRR']['USD']['BID']
                 }
 
-            if commodity in ["GOLD24"]:
-                result["IRR"][str(commodity[-2:] + "K")] = values["ask"] * 10000
-
         return result
 
 class MazanexImpl(ExtractorImpl):
