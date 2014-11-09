@@ -18,7 +18,7 @@ class StertegiesImplTest(unittest.TestCase):
     def test_SarafikishImpUSDParser(self):
         with open(os.path.join(os.path.dirname(__file__), 'fixtures/sarafikish-01.html')) as f:
             with mock.patch('httpclient.Client') as client:
-                client.get().getBody.return_value = f.read()              
+                client.get().getBody.return_value = f.read()
                 impl = SarafikishImpl(client)
                 result = impl.get_data()
 
@@ -28,6 +28,9 @@ class StertegiesImplTest(unittest.TestCase):
                     all(map(lambda i: i in result['IRR'], ['USD', 'EUR', 'AED'])),
                     "Can not find XXX => IRR commodity in result: " + result["IRR"].__repr__()
                 )
+
+                self.assertEqual(32376.0, result["IRR"]["USD"]["BID"])
+                self.assertEqual(32907.0, result["IRR"]["USD"]["ASK"])
 
     def test_SarafikishImpGoldParser(self):
         with open(os.path.join(os.path.dirname(__file__), 'fixtures/sarafikish-01.html')) as f:
@@ -64,5 +67,6 @@ class StertegiesImplTest(unittest.TestCase):
                     all(map(lambda i: i in result['IRR'], ['USD'])),
                     "Can not find XXX => IRR commodity in result: " + result["IRR"].__repr__()
                 )
-                self.assertEqual(32480.0, result["IRR"]["USD"])
+                self.assertEqual(0.0, result["IRR"]["USD"]["BID"])
+                self.assertEqual(32480.0, result["IRR"]["USD"]["ASK"])
 

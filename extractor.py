@@ -85,7 +85,10 @@ class SarafikishImpl(ExtractorImpl):
 
         for commodity, values in json.loads(jsonString).iteritems():
             if commodity in ["USDIRT", "EURIRT", "AEDIRT"]:
-                result["IRR"][str(commodity[0:3])] = values["ask"] * 10000
+                result["IRR"][str(commodity[0:3])] = {
+                    "ASK": values["ask"] * 10000,
+                    "BID": values["bid"] * 10000
+                }
 
             if commodity in ["GOLD24"]:
                 result["IRR"][str(commodity[-2:] + "K")] = values["ask"] * 10000
@@ -103,10 +106,15 @@ class MazanexImpl(ExtractorImpl):
         return self.__processHtml(dom)
 
     def __processHtml(self, dom):
-        col = dom.find(".//table[@id='m_tbl']//tr[2]/td[2]")
-        usd_rate = float(str(col.text).translate(None, ','))
+        cols = dom.findall(".//table[@id='m_tbl']//tr[2]/td")
+        usdAsk = float(str(cols[1].text).translate(None, ','))
+        usdBid = 0.0 if cols[2].text == u'-' else float(str(cols[2].text).translate(None, ','))
 
-        return {'IRR': {'USD': usd_rate * 1.0}}
+        return {'IRR': {'USD': { 
+            'ASK': usdAsk * 1.0,
+            'BID': usdBid * 1.0
+            }
+        }}
 
 # Mesghaal implementation. (this service is absolette
 class MesghaalImpl(ExtractorImpl):
