@@ -46,6 +46,9 @@ class ExtractorResult:
     def get_json(self):
         return json.dumps(self.result)
 
+    def format(self):
+        pass
+
 class ExtractorImpl:
     __metaclass__ = ABCMeta
 
@@ -82,10 +85,10 @@ class SarafikishImpl(ExtractorImpl):
 
         for commodity, values in json.loads(jsonString).iteritems():
             if commodity in ["USDIRT", "EURIRT", "AEDIRT"]:
-                result["IRR"][str(commodity[0:3])] = values["bid"] * 10000
+                result["IRR"][str(commodity[0:3])] = values["ask"] * 1000
 
             if commodity in ["GOLD24"]:
-                result["IRR"][str(commodity[-2:] + "K")] = values["bid"] * 1000
+                result["IRR"][str(commodity[-2:] + "K")] = values["ask"] * 10000
         return result
 
 class MazanexImpl(ExtractorImpl):
@@ -103,7 +106,6 @@ class MazanexImpl(ExtractorImpl):
         col = dom.find(".//table[@id='m_tbl']//tr[2]/td[2]")
         usd_rate = float(str(col.text).translate(None, ','))
 
-        print usd_rate
         return {'IRR': {'USD': usd_rate * 1.0}}
 
 # Mesghaal implementation. (this service is absolette

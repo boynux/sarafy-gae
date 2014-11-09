@@ -42,7 +42,7 @@ class StertegiesImplTest(unittest.TestCase):
                     all(map(lambda i: i in result['IRR'], ['24K'])),
                     "Can not find GOLD => IRR commodity in result: " + result["IRR"].__repr__()
                 )
-                self.assertEqual(32376.0, result["IRR"]["USD"])
+                self.assertEqual(1212215.0, result["IRR"]["24K"])
 
     def test_MazanexImplInstance(self):
         with mock.patch('httpclient.Client') as client:
@@ -64,5 +64,5 @@ class StertegiesImplTest(unittest.TestCase):
                     all(map(lambda i: i in result['IRR'], ['USD'])),
                     "Can not find XXX => IRR commodity in result: " + result["IRR"].__repr__()
                 )
-                self.assertEqual(324800.0, result["IRR"]["USD"])
+                self.assertEqual(32480.0, result["IRR"]["USD"])
 
