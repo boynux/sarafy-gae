@@ -3,7 +3,7 @@ from extractor import ExtractorResult
 class ExchangeRate():
   aggregator = None
 
-  def __init__(self, fr = 'IRR', to = 'USD'):
+  def __init__(self, fr = 'IRR', to = ['USD', 'EUR']):
     self.fr = fr
     self.to = to
     self.extractors = []
@@ -27,22 +27,18 @@ class ExchangeRate():
     return results
 
   def _aggregate(self, data):
-    if self.aggregator:
-      return [{
-        self.fr: {
-          self.to: {
-            'BID': self.aggregator([x[self.fr][self.to]['BID'] for x in data]),
-            'ASK': self.aggregator([x[self.fr][self.to]['ASK'] for x in data]),
-            }
+      result = {self.fr: {}}
+      for to in self.to:
+        if self.aggregator:
+          result[self.fr][to] = {
+           'BID': self.aggregator([x[self.fr][to]['BID'] for x in data if to in x[self.fr]]),
+           'ASK': self.aggregator([x[self.fr][to]['ASK'] for x in data if to in x[self.fr]]),
           }
-        }]
+        else:
+          result[self.fr][to] = {
+            'BID': [x[self.fr][to]['BID'] for x in data if to in x[self.fr]],
+            'ASK': [x[self.fr][to]['ASK'] for x in data if to in x[self.fr]],
+          }
 
-    return [{
-      self.fr: {
-          self.to: {
-            'BID': [x[self.fr][self.to]['BID'] for x in data],
-            'ASK': [x[self.fr][self.to]['ASK'] for x in data]
-            }
-         }
-      }]
 
+      return [result]
