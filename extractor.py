@@ -85,7 +85,7 @@ class SarafikishImpl(ExtractorImpl):
 
         for commodity, values in json.loads(jsonString).iteritems():
             if commodity in ["USDIRT", "EURIRT", "AEDIRT"]:
-                result["IRR"][str(commodity[0:3])] = values["ask"] * 1000
+                result["IRR"][str(commodity[0:3])] = values["ask"] * 10000
 
             if commodity in ["GOLD24"]:
                 result["IRR"][str(commodity[-2:] + "K")] = values["ask"] * 10000
