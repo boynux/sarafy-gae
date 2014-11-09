@@ -127,28 +127,16 @@ class ArzliveImpl(ExtractorImpl):
         return self.__processHtml(dom)
 
     def __processHtml(self, dom):
-        usdAsk, usdBid = self.__extractUSD(dom)
-        myrAsk, myrBid = self.__extractMYR(dom)
+        rates = {'USD': 's3_40', 'GBP': 's3_42', 'MYR': 's3_54'}
 
-        return {'IRR':
-            {
-              'USD': {
-                'ASK': usdAsk * 1.0,
-                'BID': usdBid
-              },
-              'MYR': {
-                'ASK': myrAsk * 1.0,
-                'BID': myrBid * 1.0
-              }
-            }
-          }
+        result = {}
+        for item in rates:
+            result[item] = dict(zip(('ASK', 'BID'), self.__extract(rates[item], dom)))
 
+        return {'IRR': result}
 
-    def __extractMYR(self, dom):
-        return float(str(dom.find(".//table//td[@class='s3_54 price']").text).translate(None, ',')), 0.0
-
-    def __extractUSD(self, dom):
-        return float(str(dom.find(".//table//td[@class='s3_40 price']").text).translate(None, ',')), 0.0
+    def __extract(self, css, dom):
+        return float(str(dom.find(".//table//td[@class='%s price']" % css).text).translate(None, ',')), 0.0
 
 # Mesghaal implementation. (this service is absolette
 class MesghaalImpl(ExtractorImpl):

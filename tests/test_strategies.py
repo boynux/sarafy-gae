@@ -88,25 +88,15 @@ class StertegiesImplTest(unittest.TestCase):
                 self.assertIsNotNone(result, "get data result is None!")
                 self.assertTrue('IRR' in result, "Can not find IRR commodity in result")
                 self.assertTrue(
-                    all(map(lambda i: i in result['IRR'], ['USD'])),
+                    all(map(lambda i: i in result['IRR'], ['USD', 'MYR', 'GBP'])),
                     "Can not find XXX => IRR commodity in result: " + result["IRR"].__repr__()
                 )
                 self.assertEqual(0.0, result["IRR"]["USD"]["BID"])
                 self.assertEqual(32480.0, result["IRR"]["USD"]["ASK"])
 
-    def test_ArzliveImplMYRParser(self):
-        with open(os.path.join(os.path.dirname(__file__), 'fixtures/arzlive-01.html')) as f:
-            with mock.patch('httpclient.Client') as client:
-                client.get().getBody.return_value = f.read()
-                impl = ArzliveImpl(client)
-                result = impl.get_data()
-
-                self.assertIsNotNone(result, "get data result is None!")
-                self.assertTrue('IRR' in result, "Can not find IRR commodity in result")
-                self.assertTrue(
-                    all(map(lambda i: i in result['IRR'], ['MYR'])),
-                    "Can not find XXX => IRR commodity in result: " + result["IRR"].__repr__()
-                )
                 self.assertEqual(0.0, result["IRR"]["MYR"]["BID"])
                 self.assertEqual(9638.0, result["IRR"]["MYR"]["ASK"])
+
+                self.assertEqual(0.0, result["IRR"]["GBP"]["BID"])
+                self.assertEqual(51156.0, result["IRR"]["GBP"]["ASK"])
 
