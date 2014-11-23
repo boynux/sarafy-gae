@@ -26,8 +26,11 @@ class HealthCheck(webapp2.RequestHandler):
 
 class ExchangeRates(webapp2.RequestHandler):
     def get(self):
-        extractor = Extractor(SarafikishImpl((httpclient.Client())))
-        result = extractor.get_result().get_json()
+        exchangeRate = ExchangeRate(to = ['USD', 'EUR', 'GBP', 'MYR'])
+        exchangeRate.addAggregator(Average())
+        exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
+
+        result = exchangeRate.getResult().get_json()
 
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(result)
