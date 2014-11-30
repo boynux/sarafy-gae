@@ -3,6 +3,5 @@ indexes:
     ancestor: yes
     properties:
       - name: fr
-      - name: to
       - name: date
         direction: desc
