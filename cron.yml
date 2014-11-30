@@ -1,0 +1,13 @@
+cron:
+  - description: daily job for average
+    url: /cron/average
+    schedule: every 24 hours
+  - description: daily job for sarafifkish
+    url: /cron/sarafikish
+    schedule: every 24 hours
+  - description: daily job for mazanex
+    url: /cron/mazanex
+    schedule: every 24 hours
+  - description: daily job for arzlive
+    url: /cron/arzlive
+    schedule: every 24 hours
