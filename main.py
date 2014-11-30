@@ -31,7 +31,7 @@ class ExchangeRates(webapp2.RequestHandler):
         result = ER.query_last_changes('Sarafikish', 'IRR', to)
 
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps({'IRR': result}))
+        self.response.write(json.dumps([{'IRR': result}]))
 
 class ExchangeRatesAverage(webapp2.RequestHandler):
     def get(self):
@@ -39,7 +39,7 @@ class ExchangeRatesAverage(webapp2.RequestHandler):
         result = ER.query_last_changes('Average', 'IRR', to)
 
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps({'IRR': result}))
+        self.response.write(json.dumps([{'IRR': result}]))
 
 application = webapp2.WSGIApplication([
     ('/', MainPage),
