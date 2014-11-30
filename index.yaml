@@ -1,0 +1,6 @@
+indexes:
+  - kind: ExchangeRate
+    ancestor: yes
+    properties:
+      - name: date
+        direction: desc
