@@ -28,30 +28,18 @@ class HealthCheck(webapp2.RequestHandler):
 class ExchangeRates(webapp2.RequestHandler):
     def get(self):
         to = ['USD', 'EUR', 'GBP', 'MYR']
-        rates = ER.query_rates(
-            ndb.Key('ExchangeRate', 'Sarafikish'),
-            'IRR',
-            to
-        )
-
-        result = json.dumps([{"IRR": rates}])
+        result = ER.query_last_changes('Sarafikish', 'IRR', to)
 
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(result)
+        self.response.write(json.dumps({'IRR': result}))
 
 class ExchangeRatesAverage(webapp2.RequestHandler):
     def get(self):
         to = ['USD', 'EUR', 'GBP', 'MYR']
-        rates = ER.query_rates(
-            ndb.Key('ExchangeRate', 'Average'),
-            'IRR',
-            to
-        )
-
-        result = json.dumps([{"IRR": rates}])
+        result = ER.query_last_changes('Average', 'IRR', to)
 
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(result)
+        self.response.write(json.dumps({'IRR': result}))
 
 application = webapp2.WSGIApplication([
     ('/', MainPage),
