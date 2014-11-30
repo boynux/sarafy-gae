@@ -9,11 +9,11 @@ class ExchangeRate(db.Model):
 
   @classmethod
   def query_rates(cls, ancestor_key, fr, to):
-    query = cls.query(cls.fr == fr, ancestor = ancestor_key)
-    query.order(-cls.date)
+    query = cls.query(cls.fr == fr, ancestor = ancestor_key).order(-cls.date)
 
     rates = {}
     for rate in query:
+        print rate
         if rate.fr not in rates.keys():
             rates[rate.to] = {
                 'ASK': rate.ask,
