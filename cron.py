@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, sys
+import os, sys, string
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 import webapp2
@@ -48,17 +48,19 @@ class ExchangeRatesAverage(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(result)
 
-class SarafikishHandler(webapp2.RequestHandler):
-  def get(self):
+class DefaultHandler(webapp2.RequestHandler):
+  def get(self, strategy):
+    cls = string.capwords(strategy) + 'Impl'
+    print cls
     exchangeRate = ExchangeRate(to = ExchangeRateTargets)
-    exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
+    exchangeRate.addExtractor(Extractor(globals()[cls]((httpclient.Client()))))
 
     result = exchangeRate.getResult().get_data()[0]
     print result
 
     for fr in result:
       for to in result[fr]:
-        key = ndb.Key("ExchangeRate", "Sarafikish")
+        key = ndb.Key("ExchangeRate", string.capwords(strategy))
         rate = ExchangeRateModel(parent=key, 
             fr = fr,
             to = to,
@@ -69,10 +71,34 @@ class SarafikishHandler(webapp2.RequestHandler):
     self.response.headers['Content-Type'] = 'application/json'
     self.response.write(result)
 
+class AverageHandler(webapp2.RequestHandler):
+  def get(self):
+    exchangeRate = ExchangeRate(to = ExchangeRateTargets)
+    exchangeRate.addAggregator(Average())
+
+    exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
+    exchangeRate.addExtractor(Extractor(MazanexImpl((httpclient.Client()))))
+    exchangeRate.addExtractor(Extractor(ArzliveImpl((httpclient.Client()))))
+
+    result = exchangeRate.getResult().get_data()[0]
+    print result
+
+    for fr in result:
+      for to in result[fr]:
+        key = ndb.Key("ExchangeRate", "Average")
+        rate = ExchangeRateModel(parent=key, 
+            fr = fr,
+            to = to,
+            ask = result[fr][to]["ASK"],
+            bid = result[fr][to]["BID"])
+        rate.put()
+
+    self.response.headers['Content-Type'] = 'application/json'
+    self.response.write(result)
+
+
 application = webapp2.WSGIApplication([
-    ('/cron/sarafikish', SarafikishHandler),
-    ('/health', HealthCheck),
-    ('/exchange-rates', ExchangeRates),
-    ('/exchange-rates/average', ExchangeRatesAverage),
+    ('/cron/average', AverageHandler),
+    ('/cron/(.*)', DefaultHandler)
 ], debug=True)
 
