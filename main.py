@@ -2,17 +2,18 @@
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
-import webapp2
-import re
+import webapp2, re, json
+import httpclient
 
 from bs4 import BeautifulSoup
 from abc import ABCMeta
 from abc import abstractmethod
 
+from google.appengine.ext import ndb
 from exchangerate import ExchangeRate
 from aggregators import Average
 from extractor import Crawler, ExtractorImpl, Extractor, ExtractorResult, SarafikishImpl, MazanexImpl, ArzliveImpl
-import httpclient
+from models.ExchangeRate import ExchangeRate as ER
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -26,25 +27,28 @@ class HealthCheck(webapp2.RequestHandler):
 
 class ExchangeRates(webapp2.RequestHandler):
     def get(self):
-        exchangeRate = ExchangeRate(to = ['USD', 'EUR', 'GBP', 'MYR'])
-        exchangeRate.addAggregator(Average())
-        exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
+        to = ['USD', 'EUR', 'GBP', 'MYR']
+        rates = ER.query_rates(
+            ndb.Key('ExchangeRate', 'Sarafikish'),
+            'IRR',
+            to
+        )
 
-        result = exchangeRate.getResult().get_json()
+        result = json.dumps([{"IRR": rates}])
 
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(result)
 
 class ExchangeRatesAverage(webapp2.RequestHandler):
     def get(self):
-        exchangeRate = ExchangeRate(to = ['USD', 'EUR', 'GBP', 'MYR'])
-        exchangeRate.addAggregator(Average())
+        to = ['USD', 'EUR', 'GBP', 'MYR']
+        rates = ER.query_rates(
+            ndb.Key('ExchangeRate', 'Average'),
+            'IRR',
+            to
+        )
 
-        exchangeRate.addExtractor(Extractor(SarafikishImpl((httpclient.Client()))))
-        exchangeRate.addExtractor(Extractor(MazanexImpl((httpclient.Client()))))
-        exchangeRate.addExtractor(Extractor(ArzliveImpl((httpclient.Client()))))
-
-        result = exchangeRate.getResult().get_json()
+        result = json.dumps([{"IRR": rates}])
 
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(result)

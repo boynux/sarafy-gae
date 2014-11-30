@@ -7,6 +7,22 @@ class ExchangeRate(db.Model):
   ask = db.FloatProperty(required=True)
   date = db.DateTimeProperty(auto_now_add=True)
 
-  def query_rates(cls, ancestor_key):
-    return cls.query(ancestor=ancestor_key).order(-cls.date)
+  @classmethod
+  def query_rates(cls, ancestor_key, fr, to):
+    query = cls.query(cls.fr == fr, ancestor = ancestor_key)
+    query.order(-cls.date)
+
+    rates = {}
+    for rate in query:
+        if rate.fr not in rates.keys():
+            rates[rate.to] = {
+                'ASK': rate.ask,
+                'BID': rate.bid,
+                'LastUpdate': rate.date.strftime("%d-%m-%Y %H:%I:%S")
+            }
+
+        if set(to) == set(rates.keys()):
+            break
+
+    return rates
 
