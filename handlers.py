@@ -7,7 +7,7 @@ class FlagsHandler:
       'USD': 'us',
       'MYR': 'my',
       'GBP': 'gb',
-      'EUR': '_European Union'
+      'EUR': '_EuropeanUnion'
   }
 
   def __call__(self, data):
