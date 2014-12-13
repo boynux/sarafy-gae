@@ -8,6 +8,7 @@ class ExchangeRate(db.Model):
   bid = db.FloatProperty(required=True)
   ask = db.FloatProperty(required=True)
   date = db.DateTimeProperty(auto_now_add=True)
+  flag_url = db.StringProperty(required=False)
 
   @classmethod
   def query_rates(cls, ancestor_key, fr):
@@ -21,21 +22,18 @@ class ExchangeRate(db.Model):
   def query_last_changes(cls, strategy, fr, to):
     rates = cls.query_rates(db.Key('ExchangeRate', string.capwords(strategy)), fr)
 
-    result = {}
+    result = []
 
     for rate in rates:
-      if rate.to not in result.keys():
-        result[rate.to] = {
-          'BID': rate.bid,
-          'ASK': rate.ask,
-          'LastUpdate': rate.date.strftime('%Y-%m-%d %H:%I:%S')
-        }
+      if rate.to not in [x['to'] for x in result]:
+        result.append(rate.to_dict())
 
-      elif 'Changes' not in result[rate.to]:
-        result[rate.to]['Changes'] = (result[rate.to]['ASK'] - rate.ask) / rate.ask if rate.ask != 0 and result[rate.to]['ASK'] != 0 else 0.0
+      elif not all(['changes' in x for x in result if x['to'] == rate.to]):
+        for item in [x for x in result if x['to'] == rate.to]:
+          item['changes'] = (item['ask'] - rate.ask) / rate.ask if rate.ask != 0 and item['ask'] != 0 else 0.0
 
-      if set(result.keys()) == set(to) and all('Changes' in x for x in result.values()):
-        break
+      if set(to) == [x['to'] for x in result]:
+        break;
 
     return result
 

@@ -11,15 +11,7 @@ class FlagsHandler:
   }
 
   def __call__(self, data):
-    if "FLAGS" not in data:
-      flags = []
-
-      for item in data:
-        flags.append({
-          'title': item,
-          'url': "%s/flags/%s/%s.png" % (self.baseUri, self.size, self.FlagsMap[item]),
-         })
-
-      data["FLAGS"] = flags
+    for item in data:
+      item['flag_url'] = "%s/flags/%s/%s.png" % (self.baseUri, self.size, self.FlagsMap[item['to']])
 
     return data

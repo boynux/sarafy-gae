@@ -4,6 +4,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 import webapp2, re, json
 import httpclient
+import datetime
+from time import mktime
 
 from bs4 import BeautifulSoup
 from abc import ABCMeta
@@ -32,7 +34,7 @@ class ExchangeRates(webapp2.RequestHandler):
         result = ER.query_last_changes('Sarafikish', 'IRR', to)
 
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps([{'IRR': result}]))
+        self.response.write(json.dumps(result, cls = JsonEncoder))
 
 class ExchangeRatesAverage(webapp2.RequestHandler):
     def get(self):
@@ -41,7 +43,14 @@ class ExchangeRatesAverage(webapp2.RequestHandler):
         result = flagsHandler(ER.query_last_changes('Average', 'IRR', to))
 
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps([{'IRR': result}]))
+        self.response.write(json.dumps(result, cls = JsonEncoder))
+
+class JsonEncoder(json.JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, datetime.datetime):
+      return obj.strftime('%Y-%m-%d %H:%I:%S')
+
+    return json.JSONEncoder.default(self, obj)
 
 application = webapp2.WSGIApplication([
     ('/', MainPage),

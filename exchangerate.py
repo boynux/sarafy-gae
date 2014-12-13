@@ -24,6 +24,7 @@ class ExchangeRate():
     for extractor in self.extractors:
       results.append(extractor.get_result().get_data())
 
+    print results
     return results
 
   def _aggregate(self, data):
