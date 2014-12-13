@@ -32,7 +32,7 @@ class ExchangeRate(db.Model):
         for item in [x for x in result if x['to'] == rate.to]:
           item['changes'] = (item['ask'] - rate.ask) / rate.ask if rate.ask != 0 and item['ask'] != 0 else 0.0
 
-      if set(to) == [x['to'] for x in result]:
+      if set(to) == set([x['to'] for x in result]):
         break;
 
     return result
