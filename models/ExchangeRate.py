@@ -32,7 +32,6 @@ class ExchangeRate(db.Model):
         }
 
       elif 'Changes' not in result[rate.to]:
-        result[rate.to]['Old'] = rate.ask
         result[rate.to]['Changes'] = (result[rate.to]['ASK'] - rate.ask) / rate.ask if rate.ask != 0 and result[rate.to]['ASK'] != 0 else 0.0
 
       if set(result.keys()) == set(to) and all('Changes' in x for x in result.values()):
