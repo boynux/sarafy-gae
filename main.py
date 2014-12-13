@@ -13,6 +13,7 @@ from google.appengine.ext import ndb
 from exchangerate import ExchangeRate
 from aggregators import Average
 from extractor import Crawler, ExtractorImpl, Extractor, ExtractorResult, SarafikishImpl, MazanexImpl, ArzliveImpl
+from handlers import FlagsHandler
 from models.ExchangeRate import ExchangeRate as ER
 
 class MainPage(webapp2.RequestHandler):
@@ -36,7 +37,8 @@ class ExchangeRates(webapp2.RequestHandler):
 class ExchangeRatesAverage(webapp2.RequestHandler):
     def get(self):
         to = ['USD', 'EUR', 'GBP', 'MYR']
-        result = ER.query_last_changes('Average', 'IRR', to)
+        flagsHandler = FlagsHandler("%s/cdn/images" % self.request.host_url)
+        result = flagsHandler(ER.query_last_changes('Average', 'IRR', to))
 
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps([{'IRR': result}]))
