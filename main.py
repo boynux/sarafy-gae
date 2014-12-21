@@ -18,6 +18,8 @@ from extractor import Crawler, ExtractorImpl, Extractor, ExtractorResult, Sarafi
 from handlers import FlagsHandler
 from models.ExchangeRate import ExchangeRate as ER
 
+from google.appengine.ext.webapp import template
+
 class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
@@ -47,7 +49,8 @@ class ExchangeRatesAverage(webapp2.RequestHandler):
 
 class Disclaimer(webapp2.RequestHandler):
     def get(self, lang = 'en'):
-        self.response.write("Disclaimer...")
+        path = os.path.join(os.path.dirname(__file__), 'templates', 'disclaimer.html')
+        self.response.out.write(template.render(path, {}))
 
 class JsonEncoder(json.JSONEncoder):
   def default(self, obj):
