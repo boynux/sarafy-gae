@@ -45,6 +45,10 @@ class ExchangeRatesAverage(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(result, cls = JsonEncoder))
 
+class Disclaimer(webapp2.RequestHandler):
+    def get(self, lang = 'en'):
+        self.response.write("Disclaimer...")
+
 class JsonEncoder(json.JSONEncoder):
   def default(self, obj):
     if isinstance(obj, datetime.datetime):
@@ -55,6 +59,8 @@ class JsonEncoder(json.JSONEncoder):
 application = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/health', HealthCheck),
+    ('/disclaimer', Disclaimer),
+    ('/disclaimer/(.*?)', Disclaimer),
     ('/exchange-rates', ExchangeRates),
     ('/exchange-rates/average', ExchangeRatesAverage),
 ], debug=True)
